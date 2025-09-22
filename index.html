@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Health Care Issues Dashboard</title>
+    <style>
+        /* CSS Styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+            color: #333;
+        }
+        .container {
+            display: flex;
+            height: 100vh;
+        }
+        .sidebar {
+            width: 250px;
+            background-color: #2c3e50;
+            color: #fff;
+            padding: 20px;
+            box-sizing: border-box;
+        }
+        .sidebar h2 {
+            margin-top: 0;
+        }
+        .sidebar ul {
+            list-style: none;
+            padding: 0;
+        }
+        .sidebar ul li {
+            margin: 10px 0;
+        }
+        .sidebar ul li a {
+            color: #fff;
+            text-decoration: none;
+            display: block;
+            padding: 10px;
+            border-radius: 5px;
+            transition: background 0.3s;
+        }
+        .sidebar ul li a:hover {
+            background-color: #34495e;
+        }
+        .main-content {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+        }
+        .header {
+            background-color: #27ae60;
+            color: #fff;
+            padding: 15px;
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+        .stat-card {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            text-align: center;
+            width: 30%;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        .chart-container {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        canvas {
+            max-width: 100%;
+        }
+        .active {
+            background-color: #1abc9c;
+        }
+        .issues-list {
+            background-color: #fff;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            padding: 20px;
+        }
+        .issues-list ul {
+            list-style: none;
+            padding: 0;
+        }
+        .issues-list li {
+            margin: 10px 0;
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="sidebar">
+            <h2>Health Care Dashboard</h2>
+            <ul>
+                <li><a href="#" id="overview-link" class="active">Overview</a></li>
+                <li><a href="#" id="analytics-link">Analytics</a></li>
+                <li><a href="#" id="issues-link">Issues</a></li>
+                <li><a href="#" id="settings-link">Settings</a></li>
+            </ul>
+        </div>
+        <div class="main-content">
+            <div class="header">
+                <h1>Health Care Issues Management</h1>
+                <p>Track and analyze health care issues in real-time</p>
+            </div>
+            <div id="content">
+                <!-- Dynamic content will be loaded here -->
+                <div id="overview" class="section">
+                    <div class="stats">
+                        <div class="stat-card">
+                            <h3>Active Patients</h3>
+                            <p id="patients-count">1,250</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Open Issues</h3>
+                            <p id="issues-count">87</p>
+                        </div>
+                        <div class="stat-card">
+                            <h3>Recovery Rate</h3>
+                            <p>92%</p>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <h3>Patient Admissions Over Time</h3>
+                        <canvas id="admissionsChart"></canvas>
+                    </div>
+                </div>
+                <div id="analytics" class="section" style="display: none;">
+                    <h2>Analytics Section</h2>
+                    <p>Detailed health analytics, trends, and forecasts will appear here.</p>
+                    <div class="chart-container">
+                        <h3>Issue Trends</h3>
+                        <canvas id="trendsChart"></canvas>
+                    </div>
+                </div>
+                <div id="issues" class="section" style="display: none;">
+                    <h2>Current Health Issues</h2>
+                    <div class="issues-list">
+                        <ul>
+                            <li>COVID-19 Variants: Monitoring new strains and vaccination rates.</li>
+                            <li>Mental Health: Increased cases post-pandemic; focus on support services.</li>
+                            <li>Chronic Diseases: Diabetes and heart disease management.</li>
+                            <li>Access to Care: Rural vs. urban disparities.</li>
+                            <li>Opioid Crisis: Tracking prescriptions and overdoses.</li>
+                        </ul>
+                    </div>
+                </div>
+                <div id="settings" class="section" style="display: none;">
+                    <h2>Settings Section</h2>
+                    <p>Customize dashboard preferences, notifications, and data sources here.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // JavaScript Code
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sidebar navigation
+            const links = document.querySelectorAll('.sidebar ul li a');
+            const sections = document.querySelectorAll('.section');
+
+            links.forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    links.forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+
+                    const targetId = this.id.replace('-link', '');
+                    sections.forEach(section => {
+                        section.style.display = section.id === targetId ? 'block' : 'none';
+                    });
+                });
+            });
+
+            // Mock data update
+            document.getElementById('patients-count').textContent = Math.floor(Math.random() * 2000) + 500;
+            document.getElementById('issues-count').textContent = Math.floor(Math.random() * 150) + 50;
+
+            // Chart.js for Overview
+            const admissionsCtx = document.getElementById('admissionsChart').getContext('2d');
+            const admissionsChart = new Chart(admissionsCtx, {
+                type: 'line',
+                data: {
+                    labels: ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun'],
+                    datasets: [{
+                        label: 'Admissions',
+                        data: [120, 150, 180, 170, 200, 190],
+                        fill: false,
+                        borderColor: 'rgb(39, 174, 96)',
+                        tension: 0.1
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+
+            // Chart.js for Analytics
+            const trendsCtx = document.getElementById('trendsChart').getContext('2d');
+            const trendsChart = new Chart(trendsCtx, {
+                type: 'bar',
+                data: {
+                    labels: ['COVID-19', 'Mental Health', 'Chronic Diseases', 'Access Issues', 'Opioid Crisis'],
+                    datasets: [{
+                        label: 'Cases',
+                        data: [300, 450, 600, 200, 350],
+                        backgroundColor: 'rgba(39, 174, 96, 0.6)'
+                    }]
+                },
+                options: {
+                    scales: {
+                        y: {
+                            beginAtZero: true
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
